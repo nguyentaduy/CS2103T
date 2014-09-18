@@ -1,4 +1,5 @@
 package TextBuddy;
+
 /**
  /**
  * This class is used to manipulate the file. Main functions include: 
@@ -7,29 +8,28 @@ package TextBuddy;
  * (add and delete) in case users don't provide arguments
  * The command format is given by the example interaction below:
  * 		java  TextBuddy mytextfile.txt)
-		Welcome to TextBuddy. mytextfile.txt is ready for use
-		command: add little brown fox
-		added to mytextfile.txt: "little brown fox"
-		command: display
-		1. little brown fox
-		command: add jumped over the moon
-		added to mytextfile.txt: "jumped over the moon"
-		command: display
-		1. little brown fox
-		2. jumped over the moon
-		command: delete 2
-		deleted from mytextfile.txt: "jumped over the moon"
-		command: display
-		1. little brown fox
-		command: clear
-		all content deleted from mytextfile.txt
-		command: display
-		mytextfile.txt is empty
-		command: exit
+ Welcome to TextBuddy. mytextfile.txt is ready for use
+ command: add little brown fox
+ added to mytextfile.txt: "little brown fox"
+ command: display
+ 1. little brown fox
+ command: add jumped over the moon
+ added to mytextfile.txt: "jumped over the moon"
+ command: display
+ 1. little brown fox
+ 2. jumped over the moon
+ command: delete 2
+ deleted from mytextfile.txt: "jumped over the moon"
+ command: display
+ 1. little brown fox
+ command: clear
+ all content deleted from mytextfile.txt
+ command: display
+ mytextfile.txt is empty
+ command: exit
  * @author Nguyen Ta Duy
  * Team id; T16-2j
  */
-
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -42,25 +42,25 @@ import java.util.Scanner;
 
 public class TextBuddy {
 
-	private static final String MSG_TOO_MANY_FILE = "More than one file name";
-	private static final String MSG_ASK_FOR_INDEX_TO_DELETE = 
-			"Please give line number to Delete. To cancel command, press enter: ";
-	private static final String MSG_ADD_EMPTY = 
-			"Provide message to add. To cancel command, press enter: ";
-	private static final String FILE_NAME_NOT_FOUND = "File name not found";
+	private static final String MSG_TOO_MANY_FILE = "More than one file name\n";
+	private static final String MSG_ASK_FOR_INDEX_TO_DELETE = "Please give line number to Delete. To cancel command, press enter: ";
+	private static final String MSG_ADD_EMPTY = "Provide message to add. To cancel command, press enter: ";
+	private static final String FILE_NAME_NOT_FOUND = "File name not found\n";
 	private static final String MSG_COMMAND = "command: ";
-	private static final String WELCOME_MSG = "Welcome to TextBuddy. %s is ready for use";
-	private static final String MSG_ADD = "added to %s: \"%s\"";
-	private static final String MSG_DELETE = "deleted from %s: \"%s\"";
-	private static final String MSG_CLEAR = "all content deleted from %s";
-	private static final String MSG_DISPLAY_EMPTY = "%s is empty";
-	private static final String MSG_INVALID_COMMAND_FORMAT = "Invalid command format";
-	private static final String MSG_INVALID_NUMBER_FORMAT = "Invalid number format";
-	private static final String MSG_NUMBER_OUT_OF_RANGE = 
-			"%d is out of range. Please enter a number from %d to %d";
-	private static final String MSG_DELETE_EMPTY = "%s is already empty";
-	private static final String LINE_DISPLAY = "%d. %s";
-	private static final String ERROR_MSG = "Error: %s";
+	private static final String WELCOME_MSG = "Welcome to TextBuddy. %s is ready for use\n";
+	private static final String MSG_ADD = "added to %s: \"%s\"\n";
+	private static final String MSG_DELETE = "deleted from %s: \"%s\"\n";
+	private static final String MSG_CLEAR = "all content deleted from %s\n";
+	private static final String MSG_EMPTY_FILE = "%s is empty\n";
+	private static final String MSG_INVALID_COMMAND_FORMAT = "Invalid command format\n";
+	private static final String MSG_INVALID_NUMBER_FORMAT = "Invalid number format\n";
+	private static final String MSG_NUMBER_OUT_OF_RANGE = "%d is out of range. Please enter a number from %d to %d\n";
+	private static final String MSG_DELETE_EMPTY = "%s is already empty\n";
+	private static final String LINE_DISPLAY = "%d %s\n";
+	private static final String ERROR_MSG = "Error: %s\n";
+
+	private static final int START_INDEX = 0;
+	private static final int POSITIVE_START_INDEX = 1;
 
 	// These are the possible command types
 	enum COMMAND {
@@ -111,13 +111,13 @@ public class TextBuddy {
 			showToUser(ERROR_MSG, MSG_TOO_MANY_FILE);
 			System.exit(0);
 		} else {
-			String fileName = args[0];
+			String fileName = args[START_INDEX];
 			showToUser(WELCOME_MSG, fileName);
 			initialize(fileName);
 		}
 	}
 
-	private static void initialize(String fileName) {
+	protected static void initialize(String fileName) {
 		list = new ArrayList<String>();
 		file = new File(fileName);
 		loadFromFile(file);
@@ -137,27 +137,23 @@ public class TextBuddy {
 	}
 
 	/** This function is used for executing the command user type in */
-	private static void executeCommand(String s) {
+	protected static String executeCommand(String s) {
 		COMMAND command = determineCommandType(s);
 		switch (command) {
 		case ADD:
-			addText(removeFirstWord(s));
-			break;
+			return addText(removeFirstWord(s));
 		case DISPLAY:
-			display();
-			break;
+			return display();
 		case DELETE:
-			deleteText(removeFirstWord(s));
-			break;
+			return deleteText(removeFirstWord(s));
 		case CLEAR:
-			clear();
-			break;
+			return clear();
 		case EXIT:
 			exit();
 		default:
-			showToUser(ERROR_MSG, MSG_INVALID_COMMAND_FORMAT);
-			break;
 		}
+		return showToUser(ERROR_MSG, MSG_INVALID_COMMAND_FORMAT);
+
 	}
 
 	/** This function is to determine the command type user type in */
@@ -179,27 +175,30 @@ public class TextBuddy {
 		}
 	}
 
-	private static String removeFirstWord(String userCommand) {
+	protected static String removeFirstWord(String userCommand) {
 		return userCommand.replace(getFirstWord(userCommand), "").trim();
 	}
 
-	private static String getFirstWord(String userCommand) {
-		return userCommand.trim().split(" ")[0];
+	protected static String getFirstWord(String userCommand) {
+		return userCommand.trim().split(" ")[START_INDEX];
 	}
 
 	/**
 	 * This function is to execute ADD command. If user provides empty text or
 	 * text containing only white spaces, ask them to provide (again) text
+	 * 
+	 * This returns a String which is displayed to user (for unit test)
+	 * 
 	 */
 
-	private static void addText(String texts) {
+	private static String addText(String texts) {
 		if (texts.isEmpty()) {
 			texts = addNotEmptyText();
 		}
 		if (texts.isEmpty())
-			return;
+			return null;
 		list.add(texts);
-		showToUser(MSG_ADD, file.getName(), texts);
+		return showToUser(MSG_ADD, file.getName(), texts);
 	}
 
 	private static String addNotEmptyText() {
@@ -210,13 +209,15 @@ public class TextBuddy {
 	/**
 	 * This function is to execute DELETE command. If users don't specify line
 	 * number to delete, ask them (again)
+	 * 
+	 * This returns a String which is displayed to user (for unit test)
 	 */
 
-	private static void deleteText(String index) {
-		if (list.size() == 0) {
+	private static String deleteText(String index) {
+		if (list.isEmpty()) {
 			// if file is empty then tell user Empty file
-			showToUser(MSG_DELETE_EMPTY, file.getName());
-			return;
+			return showToUser(MSG_DELETE_EMPTY, file.getName());
+
 		}
 
 		String lineNumberToDelete;
@@ -229,22 +230,25 @@ public class TextBuddy {
 
 		if (lineNumberToDelete.isEmpty()) {
 			// if reach here, user want to cancel command
-			return;
+			return null;
 		}
 		if (!isInteger(lineNumberToDelete)) {
 			// if users don't provide and integer number
-			showToUser(ERROR_MSG, MSG_INVALID_NUMBER_FORMAT);
-			return;
+			return showToUser(ERROR_MSG, MSG_INVALID_NUMBER_FORMAT);
+
 		}
 
 		int lineNum = Integer.parseInt(lineNumberToDelete);
 
-		if (lineNum < 1 || lineNum > list.size()) {
+		if (lineNum < POSITIVE_START_INDEX || lineNum > list.size()) {
 			// if users don't provide a number in range
-			showToUser(MSG_NUMBER_OUT_OF_RANGE, lineNum, 1, list.size());
+			return showToUser(MSG_NUMBER_OUT_OF_RANGE, lineNum,
+					POSITIVE_START_INDEX, list.size());
 		} else {
-			showToUser(MSG_DELETE, file.getName(), list.get(lineNum - 1));
+
+			String deletedLine = list.get(lineNum - 1);
 			list.remove(lineNum - 1);
+			return showToUser(MSG_DELETE, file.getName(), deletedLine);
 		}
 	}
 
@@ -266,27 +270,34 @@ public class TextBuddy {
 
 	/**
 	 * This function is to execute display command. If the file is empty, tell
-	 * them it's empty
+	 * them it's empty This returns a String which is displayed to user (for
+	 * unit test)
 	 */
-	private static void display() {
+	private static String display() {
 		if (list.isEmpty()) {
-			showToUser(MSG_DISPLAY_EMPTY, file.getName());
-			return;
+			return showToUser(MSG_EMPTY_FILE, file.getName());
 		}
-		int i = 1;
+		return displayLines();
+	}
+
+	private static String displayLines() {
+		int i = POSITIVE_START_INDEX;
+		String toDisplay = "";
 		for (String s : list) {
-			showToUser(LINE_DISPLAY, i, s);
+			toDisplay += showToUser(LINE_DISPLAY, i, s);
 			i++;
 		}
+		return toDisplay;
 	}
 
 	/**
-	 * This function is to execute Clear command
+	 * This function is to execute Clear command This returns a String which is
+	 * displayed to user (for unit test)
 	 */
 
-	private static void clear() {
+	private static String clear() {
 		list.clear();
-		showToUser(MSG_CLEAR, file.getName());
+		return showToUser(MSG_CLEAR, file.getName());
 	}
 
 	/**
@@ -314,14 +325,14 @@ public class TextBuddy {
 	}
 
 	/** This two functions are to print out messages to user */
-	public static void showToUser(String message) {
+	public static String showToUser(String message) {
 		System.out.print(message);
+		return message;
 	}
 
-	public static void showToUser(String message, Object... args) {
-		System.out.println(String.format(message, args));
+	public static String showToUser(String message, Object... args) {
+		System.out.print(String.format(message, args));
+		return String.format(message, args);
 	}
 
 }
-
-
