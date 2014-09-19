@@ -59,6 +59,8 @@ public class TextBuddy {
 	private static final String MSG_DELETE_EMPTY = "%s is already empty\n";
 	private static final String LINE_DISPLAY = "%d %s\n";
 	private static final String ERROR_MSG = "Error: %s\n";
+	private static final String MSG_NO_LINE_FOUND = "No line contains key word\n";
+	private static final String MSG_EMPTY_KEYWORD = "Empty keyword\n";
 
 	private static final int START_INDEX = 0;
 	private static final int POSITIVE_START_INDEX = 1;
@@ -66,7 +68,7 @@ public class TextBuddy {
 
 	// These are the possible command types
 	enum COMMAND {
-		ADD, DELETE, DISPLAY, CLEAR, EXIT, SORT, INVALID
+		ADD, DELETE, DISPLAY, CLEAR, EXIT, SORT, SEARCH, INVALID
 	}
 
 	// This variable is declared for the file that user is manipulating
@@ -152,6 +154,8 @@ public class TextBuddy {
 			return clear();
 		case SORT:
 			return sort();
+		case SEARCH:
+			return search(removeFirstWord(s));
 		case EXIT:
 			exit();
 		default:
@@ -174,6 +178,8 @@ public class TextBuddy {
 			return COMMAND.CLEAR;
 		case "sort":
 			return COMMAND.SORT;
+		case "search":
+			return COMMAND.SEARCH;
 		case "exit":
 			return COMMAND.EXIT;
 		default:
@@ -342,7 +348,44 @@ public class TextBuddy {
 		}
 		return lines;
 	}
+
+	/**
+	 * This method is to return a string which contains lines including the
+	 * words
+	 * 
+	 * @param word
+	 * 
+	 */
+
+	protected static String search(String word) {
+		if (word.isEmpty()) {
+			return showToUser(MSG_EMPTY_KEYWORD);
+		}
+		return displaySearch(word);
+
+	}
+
+	private static String displaySearch(String word) {
+		ArrayList<String> matchList = searchInList(word);
+		String displayLines = listToString(matchList);
+		if (list.isEmpty()) {
+			return showToUser(MSG_EMPTY_FILE, file.getName());
+		}
+		if (displayLines.isEmpty()) {
+			displayLines = MSG_NO_LINE_FOUND;
+		}
+		return showToUser(displayLines);
+	}
+
 	
+	private static ArrayList<String> searchInList(String word) {
+		ArrayList<String> matchList = new ArrayList<String>();
+		for (String s : list) {
+			if (s.contains(word))
+				matchList.add(s);
+		}
+		return matchList;
+	}
 	/**
 	 * This function is to execute exit command Before exiting, we write back to
 	 * the file
