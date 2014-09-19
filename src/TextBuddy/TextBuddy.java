@@ -1,34 +1,36 @@
 package TextBuddy;
 
 /**
- /**
  * This class is used to manipulate the file. Main functions include: 
  * add texts, delete texts, display texts, clear all texts and write 
- * changes back to file before exiting. This class accepts some not full commands 
+ * changes back to file before exiting. This class also allows sorting
+ * and searching. This class accepts some not full commands 
  * (add and delete) in case users don't provide arguments
  * The command format is given by the example interaction below:
- * 		java  TextBuddy mytextfile.txt)
- Welcome to TextBuddy. mytextfile.txt is ready for use
- command: add little brown fox
- added to mytextfile.txt: "little brown fox"
- command: display
- 1. little brown fox
- command: add jumped over the moon
- added to mytextfile.txt: "jumped over the moon"
- command: display
- 1. little brown fox
- 2. jumped over the moon
- command: delete 2
- deleted from mytextfile.txt: "jumped over the moon"
- command: display
- 1. little brown fox
- command: clear
- all content deleted from mytextfile.txt
- command: display
- mytextfile.txt is empty
- command: exit
+ * 		 java  TextBuddy mytextfile.txt
+		 Welcome to TextBuddy. mytextfile.txt is ready for use
+		 command: add little brown fox
+		 added to mytextfile.txt: "add little brown fox"
+		 command: display
+		 1. little brown fox
+		 command: add jumped over the moon
+		 added to mytextfile.txt: "jumped over the moon"
+		 command: display
+		 1. little brown fox
+		 2. jumped over the moon
+		 command: delete 2
+		 deleted from mytextfile.txt: "jumped over the moon"
+		 command: display
+		 1. little brown fox
+		 command: clear
+		 all content deleted from mytextfile.txt
+		 command: display
+		 mytextfile.txt is empty
+		 command: exit
+		 For the convenience of testing, in some method I both print out 
+		 the message and return that message
  * @author Nguyen Ta Duy
- * Team id; T16-2j
+ * Team id: T16-2j
  */
 
 import java.io.BufferedReader;
@@ -312,7 +314,6 @@ public class TextBuddy {
 		return showToUser(MSG_CLEAR, file.getName());
 	}
 
-	
 	/**
 	 * sortList. This function does sorting on the ArrayList list
 	 */
@@ -333,20 +334,6 @@ public class TextBuddy {
 		}
 		sortList();
 		return listToString(list);
-	}
-
-	/**
-	 * This method takes in an ArrayList<String> and return a string
-	 */
-	private static String listToString(ArrayList<String> list) {
-		String lines = "";
-		if (!list.isEmpty()) {
-			for (String s : list) {
-				lines += s;
-				lines += ENDLINE_CHAR;
-			}
-		}
-		return lines;
 	}
 
 	/**
@@ -377,7 +364,12 @@ public class TextBuddy {
 		return showToUser(displayLines);
 	}
 
-	
+	/**
+	 * this method takes in a word return an ArrayList of lines which contains
+	 * the words
+	 * 
+	 * @param word
+	 */
 	private static ArrayList<String> searchInList(String word) {
 		ArrayList<String> matchList = new ArrayList<String>();
 		for (String s : list) {
@@ -386,11 +378,25 @@ public class TextBuddy {
 		}
 		return matchList;
 	}
+
+	/**
+	 * This method takes in an ArrayList<String> and return a string
+	 */
+	private static String listToString(ArrayList<String> list) {
+		String lines = "";
+		if (!list.isEmpty()) {
+			for (String s : list) {
+				lines += s;
+				lines += ENDLINE_CHAR;
+			}
+		}
+		return lines;
+	}
+
 	/**
 	 * This function is to execute exit command Before exiting, we write back to
 	 * the file
 	 */
-
 	private static void exit() {
 		writeBackToFile();
 		System.exit(0);
@@ -401,7 +407,7 @@ public class TextBuddy {
 		try {
 			writer = new BufferedWriter(new FileWriter(file.getName()));
 			for (String s : list) {
-				writer.write(s + "\n");
+				writer.write(s + ENDLINE_CHAR);
 			}
 			writer.flush();
 			writer.close();
