@@ -44,6 +44,19 @@ public class TextBuddyTest {
 		assertEquals("sort fails", testResult, TextBuddy.executeCommand("sort"));
 	}
 	
+	@Test
+	public void testSearch_1() {
+		TextBuddy.executeCommand("add one thing");
+		TextBuddy.executeCommand("add two things");
+		TextBuddy.executeCommand("add 1");
+		TextBuddy.executeCommand("add something else");
+
+		String testResult = "two things\n";
+		assertEquals("sort fails", testResult,
+				TextBuddy.executeCommand("search two"));
+	}
+
+	
 	
 	
 }
