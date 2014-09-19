@@ -38,6 +38,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Scanner;
 
 public class TextBuddy {
@@ -61,10 +62,11 @@ public class TextBuddy {
 
 	private static final int START_INDEX = 0;
 	private static final int POSITIVE_START_INDEX = 1;
+	private static final String ENDLINE_CHAR = "\n";
 
 	// These are the possible command types
 	enum COMMAND {
-		ADD, DELETE, DISPLAY, CLEAR, EXIT, INVALID
+		ADD, DELETE, DISPLAY, CLEAR, EXIT, SORT, INVALID
 	}
 
 	// This variable is declared for the file that user is manipulating
@@ -148,6 +150,8 @@ public class TextBuddy {
 			return deleteText(removeFirstWord(s));
 		case CLEAR:
 			return clear();
+		case SORT:
+			return sort();
 		case EXIT:
 			exit();
 		default:
@@ -168,6 +172,8 @@ public class TextBuddy {
 			return COMMAND.DISPLAY;
 		case "clear":
 			return COMMAND.CLEAR;
+		case "sort":
+			return COMMAND.SORT;
 		case "exit":
 			return COMMAND.EXIT;
 		default:
@@ -300,6 +306,43 @@ public class TextBuddy {
 		return showToUser(MSG_CLEAR, file.getName());
 	}
 
+	
+	/**
+	 * sortList. This function does sorting on the ArrayList list
+	 */
+
+	private static void sortList() {
+		Collections.sort(list);
+	}
+
+	/**
+	 * This function does sorting and return a String containing sorted texts
+	 * (commands)
+	 * 
+	 * This returns a String which is displayed to user (for unit test)
+	 */
+	protected static String sort() {
+		if (list.isEmpty()) {
+			return showToUser(MSG_EMPTY_FILE, file.getName());
+		}
+		sortList();
+		return listToString(list);
+	}
+
+	/**
+	 * This method takes in an ArrayList<String> and return a string
+	 */
+	private static String listToString(ArrayList<String> list) {
+		String lines = "";
+		if (!list.isEmpty()) {
+			for (String s : list) {
+				lines += s;
+				lines += ENDLINE_CHAR;
+			}
+		}
+		return lines;
+	}
+	
 	/**
 	 * This function is to execute exit command Before exiting, we write back to
 	 * the file
