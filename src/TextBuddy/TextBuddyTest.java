@@ -1,5 +1,8 @@
 package TextBuddy;
 
+/**
+ * Test cases for searching and sorting
+ */
 import static org.junit.Assert.*;
 
 import org.junit.Before;
